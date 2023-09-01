@@ -1,0 +1,16 @@
+[package]
+name = "async-gate"
+version = "0.1.0"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+authors = ["J / Jacob Babich <jacobbabichpublic+git@gmail.com>"]
+edition = "2021"
+description = "A Tokio-powered asynchronous gate (analogous to a flag and highly inspired by Python's `asyncio.Event`, but can be waited for to become 'false' too)"
+categories = ["asynchronous", "concurrency"]
+keywords = ["gate", "flag", "async", "tokio", "event"]
+
+[dependencies]
+# TODO: relax version requirement
+thiserror = "1.0.47"
+# TODO: relax version requirement
+tokio = { version = "1.32", features = ["sync"] }
