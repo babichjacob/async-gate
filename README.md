@@ -4,7 +4,13 @@ This Rust library is an asynchronous "gate" that can be waited to be raised or l
 
 ## 💻 Installation
 
-This crate will be published to crates.io as `async-gate` once I set up CI/CD... (TODO)
+This crate is [published to crates.io as `async-gate`](https://crates.io/crates/async-gate), so you can do
+
+```sh
+cargo add async-gate
+```
+
+to add it to your project's dependencies.
 
 ## 🛠 Usage
 
