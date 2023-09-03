@@ -41,4 +41,6 @@ The idea is highly inspired by [Python's `asyncio.Event`](https://docs.python.or
 
 This library is implemented with [`Tokio`](https://tokio.rs/)'s [`watch` channel](https://docs.rs/tokio/1.32.0/tokio/sync/watch/index.html).
 
+I also developed [`awaitable-bool`](https://github.com/babichjacob/awaitable-bool) right after making `async-gate`. That unifies changing the value of the bool and waiting for value changes into a single type (`AwaitableBool`). It is simpler than this crate. 
+
 _This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
