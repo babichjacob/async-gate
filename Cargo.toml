@@ -8,6 +8,7 @@ edition = "2021"
 description = "A Tokio-powered asynchronous gate (analogous to a flag and highly inspired by Python's `asyncio.Event`, but can be waited for to become 'false' too)"
 categories = ["asynchronous", "concurrency"]
 keywords = ["gate", "flag", "async", "tokio", "event"]
+repository = "https://github.com/babichjacob/async-gate"
 
 [dependencies]
 # TODO: relax version requirement
