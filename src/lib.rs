@@ -33,8 +33,8 @@ impl Lever {
             Err(GateDropped)
         } else {
             self.sender.send_if_modified(|state| {
-                if *state == RAISED {
-                    *state = LOWERED;
+                if *state == LOWERED {
+                    *state = RAISED;
                     true
                 } else {
                     false
@@ -53,8 +53,8 @@ impl Lever {
             Err(GateDropped)
         } else {
             self.sender.send_if_modified(|state| {
-                if *state == LOWERED {
-                    *state = RAISED;
+                if *state == RAISED {
+                    *state = LOWERED;
                     true
                 } else {
                     false
