@@ -29,7 +29,7 @@ impl Lever {
     /// This wakes all tasks waiting on [`Gate::raised`]
     /// (and later calls to it will resolve immediately until the gate is [`lower`]ed).
     pub fn raise(&self) -> Result<(), GateDropped> {
-        if self.sender.is_closed() {
+        if self.gate_was_dropped() {
             Err(GateDropped)
         } else {
             self.sender.send_if_modified(|state| {
@@ -49,7 +49,7 @@ impl Lever {
     /// This wakes all tasks waiting on [`Gate::lowered`]
     /// (and later calls to it will resolve immediately until the gate is [`raise`]d).
     pub fn lower(&self) -> Result<(), GateDropped> {
-        if self.sender.is_closed() {
+        if self.gate_was_dropped() {
             Err(GateDropped)
         } else {
             self.sender.send_if_modified(|state| {
@@ -71,7 +71,7 @@ impl Lever {
     pub fn is_raised(&self) -> Result<bool, BeforeGateDropped> {
         let state = *self.sender.borrow() == RAISED;
 
-        if self.sender.is_closed() {
+        if self.gate_was_dropped() {
             Err(BeforeGateDropped(state))
         } else {
             Ok(state)
@@ -84,11 +84,17 @@ impl Lever {
     pub fn is_lowered(&self) -> Result<bool, BeforeGateDropped> {
         let state = *self.sender.borrow() == LOWERED;
 
-        if self.sender.is_closed() {
+        if self.gate_was_dropped() {
             Err(BeforeGateDropped(state))
         } else {
             Ok(state)
         }
+    }
+
+    /// Returns `true` if the gate associated with this lever has been dropped
+    /// and `false` if it hasn't.
+    pub fn gate_was_dropped(&self) -> bool {
+        self.sender.is_closed()
     }
 }
 
@@ -126,6 +132,12 @@ impl Gate {
             Ok(_) => Ok(()),
             Err(_) => Err(LeverDropped),
         }
+    }
+
+    /// Returns `true` if the lever associated with this gate has been dropped
+    /// and `false` if it hasn't.
+    pub fn lever_was_dropped(&self) -> bool {
+        self.receiver.has_changed().is_err()
     }
 }
 
