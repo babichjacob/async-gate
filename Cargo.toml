@@ -15,3 +15,7 @@ repository = "https://github.com/babichjacob/async-gate"
 thiserror = "1.0.47"
 # TODO: relax version requirement
 tokio = { version = "1.32", features = ["sync"] }
+
+[dev-dependencies]
+tokio = { version = "1.32", features = ["rt", "macros"] }
+tokio-test = { version = "0.4" }

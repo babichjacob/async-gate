@@ -162,3 +162,148 @@ pub fn new_lowered() -> (Lever, Gate) {
 
     (lever, gate)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Tests that the `new_raised` function returns
+    /// a `Gate` that is initially raised,
+    /// just like the name / docs claim it does.
+    #[test]
+    fn starts_raised_like_it_claims() {
+        let (lever, gate) = new_raised();
+
+        assert!(gate.is_raised());
+        assert!(!gate.is_lowered());
+
+        assert!(lever.is_raised().unwrap());
+        assert!(!lever.is_lowered().unwrap());
+    }
+
+    /// Tests that the `new_lowered` function returns
+    /// a `Gate` that is initially lowered,
+    /// just like the name / docs claim it does.
+    #[test]
+    fn starts_lowered_like_it_claims() {
+        let (lever, gate) = new_lowered();
+
+        assert!(gate.is_lowered());
+        assert!(!gate.is_raised());
+
+        assert!(lever.is_lowered().unwrap());
+        assert!(!lever.is_raised().unwrap());
+    }
+
+    /// Tests that `raised` and `lowered` resolve instantly
+    /// when the `Gate` is already `RAISED` or `LOWERED` respectively.
+    #[test]
+    fn resolves_instantly() {
+        let (_raised_lever, mut raised_gate) = new_raised();
+        let (_lowered_lever, mut lowered_gate) = new_lowered();
+
+        tokio_test::assert_ready!(tokio_test::task::spawn(raised_gate.raised()).poll()).unwrap();
+        tokio_test::assert_ready!(tokio_test::task::spawn(lowered_gate.lowered()).poll()).unwrap();
+    }
+
+    /// Tests that `lowered` and `raised` do not resolve instantly
+    /// when the `Gate` is currently `RAISED` or `LOWERED` respectively.
+    ///
+    /// Then, it tests that they do indeed once it has been `lower`ed or `raise`d respectively.
+    #[test]
+    fn does_not_resolve_until_satisfied() {
+        let (initially_raised_lever, mut initially_raised_gate) = new_raised();
+        let (initially_lowered_lever, mut initially_lowered_gate) = new_lowered();
+
+        let mut became_lowered = tokio_test::task::spawn(initially_raised_gate.lowered());
+        let mut became_raised = tokio_test::task::spawn(initially_lowered_gate.raised());
+
+        tokio_test::assert_pending!(became_lowered.poll());
+        tokio_test::assert_pending!(became_raised.poll());
+
+        initially_raised_lever.lower().unwrap();
+        initially_lowered_lever.raise().unwrap();
+
+        tokio_test::assert_ready_ok!(became_lowered.poll());
+        tokio_test::assert_ready_ok!(became_raised.poll());
+    }
+
+    /// Tests that calling `raised` on a `Gate` that was `LOWERED` when its `Lever` dropped results in an `Err`.
+    #[test]
+    fn lowered_gate_gives_err_on_raised_when_lever_dropped() {
+        let (lever, mut gate) = new_lowered();
+
+        drop(lever);
+
+        assert!(gate.lever_was_dropped());
+
+        tokio_test::assert_ready_err!(tokio_test::task::spawn(gate.raised()).poll());
+    }
+
+    /// Tests that calling `lowered` on a `Gate` that was `RAISED` when its `Lever` dropped results in an `Err`.
+    #[test]
+    fn raised_gate_gives_err_on_lowered_when_lever_dropped() {
+        let (lever, mut gate) = new_raised();
+
+        drop(lever);
+
+        assert!(gate.lever_was_dropped());
+
+        tokio_test::assert_ready_err!(tokio_test::task::spawn(gate.lowered()).poll());
+    }
+
+    /// Tests that `lowered` and `raised` will return without an `Err`
+    /// - even if the `Lever` was dropped! -
+    /// as long as the `Gate` is in the appropriate state
+    /// before the `Lever` (the only way to change that state) dropped.
+    #[test]
+    fn ok_even_if_lever_dropped_for_matching_state() {
+        let (raised_lever, mut raised_gate) = new_raised();
+        let (lowered_lever, mut lowered_gate) = new_lowered();
+
+        drop(raised_lever);
+        drop(lowered_lever);
+
+        tokio_test::assert_ready_ok!(tokio_test::task::spawn(lowered_gate.lowered()).poll());
+        tokio_test::assert_ready_ok!(tokio_test::task::spawn(raised_gate.raised()).poll());
+    }
+
+    /// Tests that a `Lever` can check if its `Gate` dropped.
+    #[test]
+    fn lever_can_check_gate_was_dropped() {
+        let (lever, gate) = new_raised();
+
+        assert!(!lever.gate_was_dropped());
+
+        drop(gate);
+
+        assert!(lever.gate_was_dropped());
+    }
+
+    /// Tests that a `Gate` can check if its `Lever` dropped.
+    #[test]
+    fn gate_can_check_lever_was_dropped() {
+        let (lever, gate) = new_raised();
+
+        assert!(!gate.lever_was_dropped());
+
+        drop(lever);
+
+        assert!(gate.lever_was_dropped());
+    }
+
+    /// Tests that a `Lever` can retrieve the state of a `Gate`
+    /// both before being dropped and after being dropped.
+    #[test]
+    fn lever_can_retrieve_dropped_gate_state() {
+        let (lever, gate) = new_lowered();
+
+        assert!(lever.is_lowered().unwrap());
+        assert!(!lever.is_raised().unwrap());
+
+        drop(gate);
+
+        assert!(lever.is_lowered().unwrap_err().0);
+        assert!(!lever.is_raised().unwrap_err().0);
+    }
+}
