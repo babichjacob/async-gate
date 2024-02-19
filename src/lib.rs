@@ -7,7 +7,7 @@ pub const LOWERED: bool = false;
 /// The gate was dropped, but we still know what value it had before dropping
 #[derive(Debug, Error)]
 #[error("gate was {0} (where true is RAISED and false is LOWERED) before dropping")]
-pub struct BeforeGateDropped(bool);
+pub struct BeforeGateDropped(pub bool);
 
 /// The gate was dropped, so raising or lowering it achieves nothing
 #[derive(Debug, Error)]
