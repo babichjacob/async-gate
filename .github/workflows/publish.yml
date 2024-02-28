@@ -11,6 +11,12 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v3
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
       - uses: taiki-e/install-action@cargo-hack
       - uses: taiki-e/install-action@cargo-minimal-versions
       - name: Check
