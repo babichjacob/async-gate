@@ -14,7 +14,7 @@ to add it to your project's dependencies.
 
 ## 🛠 Usage
 
-You probably don't want to use this if you aren't me; I haven't put much effort into documenting or even testing it.
+You probably don't want to use this if you aren't me; the code is clunky and only moderately documented and tested. You might benefit more from using a plain [`tokio::sync::watch` channel](https://docs.rs/tokio/1.32.0/tokio/sync/watch/index.html) with your own layer of logic on top.
 
 ## 😵 Help! I have a question
 
