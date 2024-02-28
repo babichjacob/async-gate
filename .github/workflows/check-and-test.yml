@@ -1,0 +1,32 @@
+name: Check and test
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  check-and-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v3
+      - uses: taiki-e/install-action@cargo-hack
+      - uses: taiki-e/install-action@cargo-minimal-versions
+      - name: Check
+        run: cargo check --verbose
+      - name: Run tests
+        run: cargo test --verbose
+      - name: Check with direct minimal versions
+        run: cargo minimal-versions --direct check --verbose
+      - name: Run tests with direct minimal versions
+        run: cargo minimal-versions --direct test --verbose
+      - name: Run tests with all (even transitive) minimal versions
+        run: cargo minimal-versions test --verbose
