@@ -11,11 +11,9 @@ keywords = ["gate", "flag", "async", "tokio", "event"]
 repository = "https://github.com/babichjacob/async-gate"
 
 [dependencies]
-# TODO: relax version requirement
-thiserror = "1.0.47"
-# TODO: relax version requirement
-tokio = { version = "1.32", features = ["sync"] }
+thiserror = "1.0.1"
+tokio = { version = "1.28", features = ["sync"] }
 
 [dev-dependencies]
-tokio = { version = "1.32", features = ["rt", "macros"] }
+tokio = { version = "1.28", features = ["rt", "macros"] }
 tokio-test = { version = "0.4" }
