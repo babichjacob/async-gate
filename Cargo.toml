@@ -11,7 +11,7 @@ keywords = ["gate", "flag", "async", "tokio", "event"]
 repository = "https://github.com/babichjacob/async-gate"
 
 [dependencies]
-thiserror = "1.0.1"
+thiserror = "2.0"
 tokio = { version = "1.37", features = ["sync"] }
 
 [dev-dependencies]
