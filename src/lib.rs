@@ -75,6 +75,7 @@ pub struct LeverDroppedWhileLowered;
 ///
 /// [`raise`]: Lever::raise
 /// [`lower`]: Lever::lower
+#[derive(Clone, Debug)]
 pub struct Lever {
     sender: watch::Sender<Gateway>,
 }
