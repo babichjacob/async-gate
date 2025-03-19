@@ -172,7 +172,7 @@ impl Lever {
 /// [`is_lowered`]: Gate::is_lowered
 /// [`raised`]: Gate::raised
 /// [`lowered`]: Gate::lowered
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Gate {
     receiver: watch::Receiver<Gateway>,
 }
