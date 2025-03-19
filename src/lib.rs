@@ -34,7 +34,7 @@ impl std::fmt::Display for Gateway {
     }
 }
 
-#[derive(Debug, Error)]
+#[derive(Clone, Copy, Debug, Error)]
 #[error("failed to parse Gateway: provided string was not `Raised` or `Lowered`")]
 pub struct ParseGatewayError;
 
@@ -52,22 +52,22 @@ impl FromStr for Gateway {
 }
 
 /// The gate was dropped, but we still know what value it had before dropping
-#[derive(Debug, Error)]
+#[derive(Clone, Copy, Debug, Error)]
 #[error("gate was {0} before dropping")]
 pub struct BeforeGateDropped(pub Gateway);
 
 /// The gate was dropped, so raising or lowering it achieves nothing
-#[derive(Debug, Error)]
+#[derive(Clone, Copy, Debug, Error)]
 #[error("gate was dropped")]
 pub struct GateDropped;
 
 /// The lever was dropped while the gate was raised, so the gate will never be lowered again
-#[derive(Debug, Error)]
+#[derive(Clone, Copy, Debug, Error)]
 #[error("lever was dropped while raised")]
 pub struct LeverDroppedWhileRaised;
 
 /// The lever was dropped while the gate was raised, so the gate will never be lowered again
-#[derive(Debug, Error)]
+#[derive(Clone, Copy, Debug, Error)]
 #[error("lever was dropped while lowered")]
 pub struct LeverDroppedWhileLowered;
 
